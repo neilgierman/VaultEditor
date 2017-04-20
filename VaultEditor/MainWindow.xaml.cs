@@ -67,6 +67,8 @@ namespace VaultEditor
             }
             lbRockCount.Content = _vault.CountList("vault", "rocks");
             lbLRoomsCount.Content = _vault.Count(false, "unlockableMgr", "objectivesInProgress", "completed");
+            grpDwellers.Header = "Dwellers: " + _vault.CountList("dwellers", "dwellers").ToString();
+            chkEmergency.IsChecked = (bool)_vault.Get("vault", "emergencyData", "active");
         }
 
         #region Layout
@@ -83,12 +85,16 @@ namespace VaultEditor
         {
             btSave.IsEnabled = false;
             grVault.IsEnabled = false;
+            btnHeal.IsEnabled = false;
+            btnMaxStats.IsEnabled = false;
         }
 
         private void EnableComponents()
         {
             btSave.IsEnabled = true;
             grVault.IsEnabled = true;
+            btnHeal.IsEnabled = true;
+            btnMaxStats.IsEnabled = true;
         }
 
         #endregion
@@ -105,7 +111,7 @@ namespace VaultEditor
                 var dialog = new OpenFileDialog
                 {
                     DefaultExt = ".sav",
-                    Filter = "Fallout Shelter Save|*.sav;*.bak",
+                    Filter = "Fallout Shelter Save|*.sav;*.bak|All Files|*.*",
                     Multiselect = false,
                     CheckFileExists = true
                 };
@@ -203,6 +209,8 @@ namespace VaultEditor
             {
                 _vault.Set(true, "unlockableMgr", "objectivesInProgress", "completed");
             }
+            _vault.Set(chkEmergency.IsChecked, "vault", "emergencyData", "active");
+            
         }
 
         private void btSave_Click(object sender, RoutedEventArgs e)
@@ -256,6 +264,56 @@ namespace VaultEditor
                     MessageBox.Show(this, x.Message, "Error when Saving", MessageBoxButton.OK, MessageBoxImage.Error);
                 }               
             }
+        }
+
+        private void btnHeal_Click(object sender, RoutedEventArgs e)
+        {
+            // Get the array of dwellers
+            ArrayList dwellers = (ArrayList)_vault.Get("dwellers", "dwellers");
+
+            //Cycle through each dweller
+            foreach (System.Collections.Generic.Dictionary<string, object> dweller in dwellers)
+            {
+                // Get the happiness collection
+                System.Collections.Generic.Dictionary<string, object> happiness = (System.Collections.Generic.Dictionary < string, object>)dweller["happiness"];
+                // Set happiness to 100
+                happiness["happinessValue"] = decimal.Parse("100");
+
+                // Get the health collection
+                System.Collections.Generic.Dictionary<string, object> health = (System.Collections.Generic.Dictionary < string, object>)dweller["health"];
+                // Get the max heath value
+                decimal maxHealth = (decimal)health["maxHealth"];
+                // Set the current health to max
+                health["healthValue"] = maxHealth;
+                // Clear the radiation level
+                health["radiationValue"] = decimal.Parse("0");
+
+            }
+
+            // Save the modified array back to the vault
+            _vault.Set(dwellers, "dwellers", "dwellers");
+        }
+
+        private void btnMaxStats_Click(object sender, RoutedEventArgs e)
+        {
+            // Get the array of dwellers
+            ArrayList dwellers = (ArrayList)_vault.Get("dwellers", "dwellers");
+
+            //Cycle through each dweller
+            foreach (System.Collections.Generic.Dictionary<string, object> dweller in dwellers)
+            {
+                // Get the stats collection
+                ArrayList stats = (ArrayList)((System.Collections.Generic.Dictionary<string, object>)dweller["stats"])["stats"];
+                foreach (System.Collections.Generic.Dictionary<string, object> stat in stats)
+                {
+                    stat["value"] = decimal.Parse("10");
+                }
+
+            }
+
+            // Save the modified array back to the vault
+            _vault.Set(dwellers, "dwellers", "dwellers");
+
         }
     }
 }

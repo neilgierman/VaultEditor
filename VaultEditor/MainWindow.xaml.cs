@@ -87,6 +87,8 @@ namespace VaultEditor
             grVault.IsEnabled = false;
             btnHeal.IsEnabled = false;
             btnMaxStats.IsEnabled = false;
+            txtDwellerLevel.IsEnabled = false;
+            btnMinDwellerLevel.IsEnabled = false;
         }
 
         private void EnableComponents()
@@ -95,6 +97,8 @@ namespace VaultEditor
             grVault.IsEnabled = true;
             btnHeal.IsEnabled = true;
             btnMaxStats.IsEnabled = true;
+            txtDwellerLevel.IsEnabled = true;
+            btnMinDwellerLevel.IsEnabled = true;
         }
 
         #endregion
@@ -268,6 +272,7 @@ namespace VaultEditor
 
         private void btnHeal_Click(object sender, RoutedEventArgs e)
         {
+            DisableComponents();
             // Get the array of dwellers
             ArrayList dwellers = (ArrayList)_vault.Get("dwellers", "dwellers");
 
@@ -292,10 +297,12 @@ namespace VaultEditor
 
             // Save the modified array back to the vault
             _vault.Set(dwellers, "dwellers", "dwellers");
+            EnableComponents();
         }
 
         private void btnMaxStats_Click(object sender, RoutedEventArgs e)
         {
+            DisableComponents();
             // Get the array of dwellers
             ArrayList dwellers = (ArrayList)_vault.Get("dwellers", "dwellers");
 
@@ -314,6 +321,37 @@ namespace VaultEditor
             // Save the modified array back to the vault
             _vault.Set(dwellers, "dwellers", "dwellers");
 
+            EnableComponents();
+        }
+
+        private void btnMinDwellerLevel_Click(object sender, RoutedEventArgs e)
+        {
+            decimal temp;
+            if (decimal.TryParse(txtDwellerLevel.Text, out temp) == false) {
+                MessageBox.Show("Enter valid level");
+            } else {
+                DisableComponents();
+                int minLevel = int.Parse(txtDwellerLevel.Text);
+                // Get the array of dwellers
+                ArrayList dwellers = (ArrayList)_vault.Get("dwellers", "dwellers");
+
+                //Cycle through each dweller
+                foreach (System.Collections.Generic.Dictionary<string, object> dweller in dwellers)
+                {
+                    // Get the experience collection
+                    System.Collections.Generic.Dictionary<string, object> experience = (System.Collections.Generic.Dictionary<string, object>)dweller["experience"];
+                    // set current level to at least minimum
+                    if ((int)experience["currentLevel"] < minLevel)
+                    {
+                        experience["currentLevel"] = minLevel;
+                    }
+
+                }
+                // Save the modified array back to the vault
+                _vault.Set(dwellers, "dwellers", "dwellers");
+
+                EnableComponents();
+            }
         }
     }
 }

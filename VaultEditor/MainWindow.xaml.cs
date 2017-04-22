@@ -89,6 +89,7 @@ namespace VaultEditor
             btnMaxStats.IsEnabled = false;
             txtDwellerLevel.IsEnabled = false;
             btnMinDwellerLevel.IsEnabled = false;
+            btnBaby.IsEnabled = false;
         }
 
         private void EnableComponents()
@@ -99,6 +100,7 @@ namespace VaultEditor
             btnMaxStats.IsEnabled = true;
             txtDwellerLevel.IsEnabled = true;
             btnMinDwellerLevel.IsEnabled = true;
+            btnBaby.IsEnabled = true;
         }
 
         #endregion
@@ -353,5 +355,34 @@ namespace VaultEditor
                 EnableComponents();
             }
         }
+
+        private void btnBaby_Click(object sender, RoutedEventArgs e)
+        {
+            DisableComponents();
+            int babies = 0;
+            // Get the array of dwellers
+            ArrayList dwellers = (ArrayList)_vault.Get("dwellers", "dwellers");
+
+            //Cycle through each dweller
+            foreach (System.Collections.Generic.Dictionary<string, object> dweller in dwellers)
+            {
+                if ((bool)dweller["pregnant"] == true)
+                {
+                    if ((bool)dweller["babyReady"] == false)
+                    {
+                        dweller["babyReady"] = true;
+                        babies++;
+                    }
+                }
+
+            }
+
+            // Save the modified array back to the vault
+            _vault.Set(dwellers, "dwellers", "dwellers");
+            MessageBox.Show(babies.ToString() + " babies ready");
+            EnableComponents();
+
+        }
+
     }
 }

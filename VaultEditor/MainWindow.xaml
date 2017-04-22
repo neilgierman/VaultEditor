@@ -106,6 +106,7 @@
                     <Button x:Name="btnMaxStats" Content="Max Stats" HorizontalAlignment="Left" Margin="89,10,0,0" VerticalAlignment="Top" Width="55" Click="btnMaxStats_Click" />
                     <TextBox Name="txtDwellerLevel" Text="1" HorizontalAlignment="Left" Margin="103,35,0,0" VerticalAlignment="Top" Width="41"/>
                     <Button Name="btnMinDwellerLevel" Content="Min Dweller Lvl" Click="btnMinDwellerLevel_Click" Width="88" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top"/>
+                    <Button Name="btnBaby" Content="Baby Done" Click="btnBaby_Click" Width="67" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top" />
                 </Grid>
             </GroupBox>
             <CheckBox x:Name="chkEmergency" Content="In Emergency" Grid.Column="4" HorizontalAlignment="Left" Margin="0,8,0,0" Grid.Row="8" VerticalAlignment="Top" Width="105"/>
